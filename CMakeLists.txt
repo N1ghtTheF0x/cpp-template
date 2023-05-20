@@ -39,8 +39,14 @@ if(WIN32 AND NTF_WINDOWS_USE_WIN32)
     set(NTF_USE_WIN32 WIN32) # Use Win32 with executable. This disables Console!
 endif()
 
+if(BUILD_SHARED_LIBS)
+    set(NTF_LIB_TYPE SHARED)
+else()
+    set(NTF_LIB_TYPE STATIC)
+endif()
+
 if(NTF_TYPE STREQUAL "LIB")
-    add_library(${NTF_PROJECT_NAME} ${NTF_SOURCES})
+    add_library(${NTF_PROJECT_NAME} ${NTF_LIB_TYPE} ${NTF_SOURCES})
 elseif(NTF_TYPE STREQUAL "EXE")
     add_executable(${NTF_PROJECT_NAME} ${NTF_USE_WIN32} main.cpp ${NTF_SOURCES})
 else()
@@ -53,7 +59,7 @@ else()
     set_target_properties(${NTF_PROJECT_NAME} PROPERTIES PREFIX ${NTF_PREFIX}-${NTF_VERSION}-)
 endif()
 
-if(UNIX) # when on linux, put the arch type as suffix
+if(UNIX AND NTF_TYPE STREQUAL "EXE") # when on linux, put the arch type as suffix
     set_target_properties(${NTF_PROJECT_NAME} PROPERTIES SUFFIX .${CMAKE_SYSTEM_PROCESSOR})
 endif()
 
